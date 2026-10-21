@@ -1,0 +1,33 @@
+---
+title: "Popularity of the Name Isabella Over Time"
+format: html
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+
+# Read the SSA baby names dataset
+baby_names <- read_csv("ssa-baby-names.csv")
+
+# Filter for the name Isabella and sum counts per year
+isabella <- baby_names |>
+  filter(name == "Isabella", sex == "F")
+```
+
+The chart below shows the number of female babies named **Isabella** in the United States each year from 1880 to 2025, using data from the Social Security Administration.
+
+```{r}
+ggplot(isabella, aes(x = year, y = count)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  labs(
+    title = "Babies Named Isabella in the U.S. (1880–2025)",
+    x = "Year",
+    y = "Number of Babies",
+    caption = "Source: Social Security Administration"
+  ) +
+  theme_minimal()
+```
