@@ -1,6 +1,8 @@
 ---
-title: "Popularity of the Name Isabella Over Time"
-format: html
+title: "Popularity of Isabella, Sophia, and Savannah Over Time"
+format:
+  html:
+    fig-format: svg
 execute:
   echo: false
   message: false
@@ -13,20 +15,29 @@ library(tidyverse)
 # Read the SSA baby names dataset
 baby_names <- read_csv("ssa-baby-names.csv")
 
-# Filter for the name Isabella and sum counts per year
-isabella <- baby_names |>
-  filter(name == "Isabella", sex == "F")
+# Filter for Isabella, Sophia, and Savannah
+selected_names <- baby_names |>
+  filter(name %in% c("Isabella", "Sophia", "Savannah"), sex == "F")
+
+# Pick points every 10 years and at each name's peak for the baby icons
+baby_points <- selected_names |>
+  group_by(name) |>
+  filter(year %% 15 == 0 | count == max(count)) |>
+  ungroup()
 ```
 
-The chart below shows the number of female babies named **Isabella** in the United States each year from 1880 to 2025, using data from the Social Security Administration.
+The chart below shows the number of female babies named **Isabella**, **Sophia**, and **Savannah** in the United States each year from 1880 to 2025, using data from the Social Security Administration.
 
 ```{r}
-ggplot(isabella, aes(x = year, y = count)) +
-  geom_line(color = "steelblue", linewidth = 1) +
+#| dev: svglite
+ggplot(selected_names, aes(x = year, y = count, color = name)) +
+  geom_line(linewidth = 1) +
+  geom_text(data = baby_points, label = "👶", size = 5, show.legend = FALSE) +
   labs(
-    title = "Babies Named Isabella in the U.S. (1880–2025)",
+    title = "Babies Named Isabella, Sophia, and Savannah in the U.S. (1880–2025)",
     x = "Year",
     y = "Number of Babies",
+    color = "Name",
     caption = "Source: Social Security Administration"
   ) +
   theme_minimal()
